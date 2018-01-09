@@ -44,10 +44,9 @@ int medicinal::checkmedicinal()//检索药材，找到返回1，没找到返回0
 	}
 	else{
 		cout << "查找失败" << endl;
+		return 0;
 	}
-	return 0;
-
-	return 1;
+	
 }
 void medicinal::Savetofile()	//将链表信息存入文件中
 {

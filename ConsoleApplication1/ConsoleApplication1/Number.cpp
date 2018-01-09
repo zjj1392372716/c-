@@ -74,9 +74,9 @@ void Number::Outputlist(struct PNumber *head, int flag)//链表结点的输出
 		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 		cout << "+++++++++++++++++++您的挂号信息：++++++++++++++++++++++\n";
 		cout << "\n";
-		cout << "姓名" << "\t" << "所挂号码" << "\t" << "身份证号码" << "\t\t" << "部门" << "\t" << "是否专家门诊" << "挂号费用" << endl;
+		cout << "姓名" << "\t" << "所挂号码" << "\t" << "身份证号码" << "\t\t" << "部门" << "\t" << "是否专家门诊" << "\t"<<"挂号费用" << endl;
 	}
-	cout << p->name << "\t" << p->m_num << "\t\t" << p->idcard << "\t" << p->department << "\t" << p->isexport << "\t" << p->money << endl;
+	cout << p->name << "\t" << p->m_num << "\t\t" << p->idcard << "\t" << p->department << "\t" << p->isexport << "\t\t" << p->money << endl;
 
 	Outputlist(p->next, 0);
 }

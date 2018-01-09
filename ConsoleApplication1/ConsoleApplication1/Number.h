@@ -17,9 +17,9 @@ public:
 	PNumber *n_head;//头指针
 	Number();
 	void Savetofile();	//将链表信息存入文件中
-	void loadFile();
+	void loadFile();//加载文件
 	void insertNum(string name, string idcard, string num, string department, string money, string isexport,int flag);//链表结点的插入
-	PNumber *Gethead(){ return n_head; }
+	PNumber *Gethead(){ return n_head; }//返回长度
 	int Length();//链表的长度
 	void Outputlist(struct PNumber *head, int flag);//链表结点的输出
 	~Number();

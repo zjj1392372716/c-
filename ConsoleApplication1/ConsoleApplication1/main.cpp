@@ -6,19 +6,11 @@
 #include <fstream>
 #include<stdlib.h>  
 #include "Doctor.h"
+#include "medicinal.h"
 using namespace std;
 Patient p1;							//全局病人对象
 
-struct Registers * r_head = NULL;	//注册链表头指针
-struct Registers * r_prev = NULL, *r_current = NULL;
-struct id{							//挂号链表
-	string name;
-	string idcard;
-	int m_id;
-	struct id * next; 				//指向链表中的下一个结构 
-};
-//struct id * id_head = NULL;			//挂号链表头指针
-//struct id * id_prev = NULL, *id_current = NULL;
+
 //函数声明区 
 int  menu();						//主目录菜单
 void start();						//欢迎页面
@@ -28,9 +20,17 @@ void Outpatient();					//门诊
 void toRegister();					//注册医疗卡
 void saveDatatoReg(string name, string idcard, int age, string username, string password);//将注册数据存储到链表中 
 void Save();						//保存注册链表中的数据到文件中
-void DisplayReg(struct Registers *head, int flag);	//打印注册链表中的数据 
+void DisplayReg(struct Registers *head, int flag);//打印注册链表中的数据 
 void inputinfo(long long n);					//输入挂号信息
 void toLogin();									//以有医疗卡去登录挂号
+void DoctorDemo();								//医生模块
+int DoctorDismenu(Doctor *d1);					//医生模块
+void showmedicinal();							//展示药材库
+void checkM(Doctor * p);						//检索药品库
+void FindInMedicalCard();						//医疗卡查询病人信息
+void exit();									//退出系统
+int AdminDismenu();							//管理员子目录
+void admin();									//管理员操作
 //函数定义区 
 
 void Outpatient()
@@ -48,26 +48,88 @@ void Outpatient()
 
 	case 2:toRegister(); break;
 	case 1:toLogin(); break;
-
+	default:cout << "error\n";
 	}
 
 
 }
+void DoctorDemo()								//医生模块
+{
+	Doctor *d1 = new Doctor();//实例化一个医生类
+	d1->DoctorToLogin();//身份验证
+	int flag;
+	while (flag = DoctorDismenu(d1)){
+		//显示子目录
+		if (flag == 0){
+			break;
+		}
+	}
+}
+void showmedicinal(){
+	medicinal m1; m1.Outputlist(m1.Gethead(), 1);
+}
+void checkM(Doctor * p)
+{
+	p->checkmedicinal();
+
+}
+int DoctorDismenu(Doctor *d1)								//医生模块
+{
+	cout << "       *****************请输入您的选择********************\n";
+	cout << "       **		1、查看诊断病例			**\n";
+	cout << "       **		2、查看药品列表			**\n";
+	cout << "       **		3、检索药品			**\n";
+	cout << "       **		4、医疗卡查询病人病例				**\n";
+	cout << "       **		5、退出						**\n";
+	cout << "       **		亲，请输入您的选择：		**\n";
+	
+	int n;
+	cin >> n;
+	switch (n)
+	{
+	case 1: d1->Outputlist(d1->Gethead(), 1); break;
+	case 2:	showmedicinal(); break;
+	case 3:	checkM(d1); break;
+	case 4: FindInMedicalCard(); break;
+	case 5: return 0; break;
+	}
+	return 1;
+
+}
+
 void toLogin()									//以有医疗卡去登录挂号
 {
+	C:
 	string username, pwd;
 	cout << "请输入您的用户名" << endl;
 	cin >> username;
 	cout << "请输入您的密码" << endl;
 	cin >> pwd;
 	//到链表中检查是否有这个用户名和密码
+	List l2;
 	//实例化一个注册类
+	int numm = l2.checkreglist(username, pwd);	//调用挂号类的检查方法
+	if (numm == 0)
+	{
+		//身份确认失败后
+		cout << "请重新输入一次" << endl;
+		goto C;
+	}
+	else if (numm == 1)
+	{
+		//如果返回是true
+		cout << "身份确认成功！！即将开始挂号.....\n";
+		cout << "请按照提示完成下面挂号信息：\n";
 
-	//调用挂号类的检查方法
+	}
 	
-	//如果返回是true
 	//提示输入挂号信息
-	/*
+	Number n3;
+	//实例化一个挂号类
+
+	//读取文件内容到链表中
+	long long n = n3.Length();
+	n = n + 1;
 	string name, idcard, department;
 	string money = "20.0";
 	string isexport;
@@ -90,17 +152,27 @@ void toLogin()									//以有医疗卡去登录挂号
 	sprintf(buffer, "%04i", counter);
 	std::string number = std::string(buffer);
 
-	n2.insertNum(name, idcard, number, department, money, isexport, 2);
-	n2.Savetofile();
+	n3.insertNum(name, idcard, number, department, money, isexport, 2);
+	n3.Savetofile();
 	cout << "您的号码是" << n << endl;
 	//打印挂号信息
 	cout << "恭喜您挂号成功！！！！！请您去看医生吧！" << endl;
-	*/
+	cout << "\n\n\n";
+	cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+	//寻找医生看病
+	Doctor d1;//实例化医生
+	d1.DoctorToLogin();//登录---用户名为doctor密码为0000
+	string new_name, new_num, new_idcard;
+	new_name = name;
+	new_num = number;
+	new_idcard = idcard;
+	//询问病人信息
+	d1.askInfo(new_name, new_num, new_idcard);
 }
 void toRegister()
 {
 	string name, idcard, username, password, repassword;
-	int age;
+	string  age;
 	cout << "NO.1 请输入您的姓名" << endl;
 	cin >> name;
 	cout << "NO.2 请输入您的年龄" << endl;
@@ -125,7 +197,7 @@ B:
 		//实例化一个注册链表类
 		List regList;
 		//将信息存入到注册的链表中 
-		regList.insertlist(name, idcard, age, username, password);
+		regList.insertlist(name, idcard, age, username, password,1);
 		
 		//regList.Outputlist(regList.Gethead(),1);
 		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
@@ -145,6 +217,7 @@ B:
 		string money = "20.0";
 		string isexport;
 		int m;
+		cout << "请按照提示完成下列信息填写\n";
 		cout << "NO.1 请输入您的姓名" << endl;
 		cin >> name;
 		cout << "NO.2 请输入您要去的部门" << endl;
@@ -172,10 +245,11 @@ B:
 		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 		//寻找医生看病
 		Doctor d1;//实例化医生
+		d1.DoctorToLogin();//登录---用户名为doctor密码为0000
 		string new_name, new_num, new_idcard;
-		new_name = p1.getname();
-		new_num = n;
-		new_idcard = p1.getidcard();
+		new_name = name;
+		new_num = number;
+		new_idcard = idcard;
 		//询问病人信息
 		d1.askInfo(new_name, new_num, new_idcard);
 	}
@@ -184,7 +258,31 @@ B:
 		goto B;
 	}
 }
+void FindInMedicalCard()
+{
+	E:
+	string username, pwd;
+	//请输入医疗卡的用户名和密码
+	cout << "请输入医疗卡的用户名\n";
+	cin >> username;
+	cout << "请输入医疗卡的密码\n";
+	cin >> pwd;
+	List l3;//实例化医疗卡注册表类
+	string flag = l3.checkinfo(username, pwd);
+	if (flag.length()!=0)
+	{
+		//拿着返回值去病人信息库中查找
+		cout << "身份确认成功，请稍等.....\n";
+		Doctor d1;
+		d1.findByIdcard(flag);//查找病人信息
+	}
+	else{
+		cout << "很抱歉，请确认您的用户名和密码是否正确\n";
+		goto E;
+	}
+	
 
+}
 
 void Patient1()
 {
@@ -203,25 +301,70 @@ void Patient1()
 int  menu()							//主目录菜单 
 {
 	int n;
-	/*List l1;
-	l1.loadFile();
-	l1.Outputlist(l1.Gethead(), 1);*/
-	
-	puts("       *****************请输入您的身份********************\n");
-	puts("       **		1、病人				**\n");
-	puts("       **		2、管理员			**\n");
-	puts("       **		3、医生				**\n");
-	puts("       **		0、退出				**\n");
-	puts("       **		亲，请输入您的选择：		**\n");
+	cout<<"       *****************请输入您的身份********************\n";
+	cout<<"       **		1、病人				**\n";
+	cout<<"       **		2、管理员			**\n";
+	cout<<"       **		3、医生				**\n";
+	cout<<"       **		0、退出				**\n";
+	cout<<"       **		亲，请输入您的选择：		**\n";
 	cin >> n;
 	switch (n)
 	{
 	case 1:Patient1(); break;
-		//		case 2:;break;
-		//		case 3:deleteStudents();break;
-
+	case 2:admin();break;
+	case 3:DoctorDemo();break;
+	case 0:exit(); break;
+	default:cout << "error\n";
 	}
 	return n;
+}
+void admin()								//管理员操作
+{
+	F:
+	//首先登陆验证
+	string username, pwd;
+	cout << "请输入用户名" << endl;
+	cin >> username;
+	cout << "请输入密码" << endl;
+	cin >> pwd;
+	if (username == "admin"&&pwd == "admin")
+	{
+		cout << "身份验证成功!!!" << endl;
+		cout << "+++++++++++++++++++++++++++++++++++++++\n";
+	}
+	else{
+		goto F;
+	}
+	int flag;
+	while (flag = AdminDismenu()){
+		//显示子目录
+		if (flag == 0){
+			break;
+		}
+	}
+}
+int AdminDismenu()							//管理员子目录
+{
+	cout << "       *****************请输入您的选择********************\n";
+	cout << "       **		1、查看病人注册信息		**\n";
+	cout << "       **		2、查看挂号信息			**\n";
+	cout << "       **		0、退出				**\n";
+	cout << "       **		亲，请输入您的选择：		**\n";
+	int n;
+	List l1;
+	Number n1;
+	cin >> n;
+	switch (n)
+	{
+	case 1: l1.Outputlist(l1.Gethead(), 1); break;
+	case 2:	n1.Outputlist(n1.Gethead(), 1); break;
+	case 0: return 0; break;
+	}
+	return 1;
+}
+void exit()				//退出系统
+{
+	exit(1);
 }
 void displayPatient(){
 	int n;
@@ -255,16 +398,16 @@ int main() {
 
 void start(){
 
-	puts("       ***********************************************************");
-	puts("       ***********************************************************");
-	puts("       ***********************************************************");
-	puts("                       ***************************");
-	printf("                            欢迎使用本系统\n");
-	puts("                       ***************************");
-	puts("       ***********************************************************");
-	puts("       ***********************************************************");
-	puts("       ***********************************************************");
-	printf("\n");
-	printf("\n");
+	cout<<"       ***********************************************************\n";
+	cout<<"       ***********************************************************\n";
+	cout<<"       ***********************************************************\n";
+	cout<<"                       ***************************\n";
+	cout<<"                          欢迎使用本系统\n";
+	cout<<"                       ***************************\n";
+	cout<<"       ***********************************************************\n";
+	cout<<"       ***********************************************************\n";
+	cout<<"       ***********************************************************\n";
+	cout << "\n";
+	cout << "\n";
 
 }

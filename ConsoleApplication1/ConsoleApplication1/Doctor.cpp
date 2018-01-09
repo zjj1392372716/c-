@@ -6,7 +6,8 @@
 #include <stdlib.h>
 using namespace std;
 
-Doctor::Doctor(){
+Doctor::Doctor(string name, int age) :medicinal(), Person(name,age)
+{
 	d_head = NULL;
 	loadFile();//当初始化的时候就加载文件到链表
 
@@ -101,7 +102,8 @@ void Doctor::askInfo(string name,string num,string idcard)//询问病情写入链表
 	//实例化药材库对象
 	medicinal m1;
 	//调用其检索方法
-	m1.Outputlist(m1.Gethead(),1);
+	//m1.Outputlist(m1.Gethead(),1);
+
 	int flag = m1.checkmedicinal();
 	if (flag == 1){
 		//如果有就求出总费用
@@ -123,11 +125,34 @@ void Doctor::askInfo(string name,string num,string idcard)//询问病情写入链表
 	cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
 	cout << "+++++++++++++++++++挂号单信息:++++++++++++++++++++++\n";
 	cout << "\n";
-	cout << "姓名" << "\t" << "身份证号码" << "\t" << "挂号" << "\t\t" << "费用" << "\t" << "病情以及病史" << "诊断结果" << "\t" << "药方" << endl;
-	cout << name << "\t" << idcard << "\t\t" << num << "\t" << moneyall << "\t" << record << "\t" << result << medicine << "\t" << endl;
+	cout << "姓名" << "\t" << "身份证号码" << "\t\t\t" << "挂号" << "\t\t" << "费用" << "\t\t" << "病情以及病史"<<"\t\t" << "诊断结果" << "\t" << "药方" << endl;
+	cout << name << "\t" << idcard << "\t\t" << num << "\t" << moneyall << "\t" << record << "\t" << result<<"\t" << medicine << "\t" << endl;
 	//存入文件
 	Savetofile();
+	cout << "前往缴费处ing................\n";
+	//缴费模块
+	G:
+	string id;
+	cout << "请出示申请单\n";
+	cout << "请输入您的挂号ID" << endl;
+	cin >> id;
+	if (id == num)
+	{
+		cout << "您好,一共" << moneyall << "元,请拿好您的药，祝您早日康复!!" << endl;
+	}
+	else{
+		cout << "很抱歉，请重新输入\n";
+		goto G;
+	}
+	
 
+
+}
+void showMedicinal(){
+	//实例化药材库对象
+	medicinal m1;
+	//调用其检索方法
+	m1.Outputlist(m1.Gethead(),1);
 }
 string Doctor::getResult(){
 	string str;
@@ -153,7 +178,32 @@ void Doctor::Savetofile()	//将链表信息存入文件中
 	in.close();//关闭文件
 
 }
+void Doctor::DoctorToLogin()//医生登录
+{
+	D:
+	cout << "+++++++++++++++++++++++++\n";
+	cout << "医生连线中.......\n";
+	cout << "请输入您的用户名" << endl;
+	string username;
+	cin >> username;
+	cout << "请输入您的密码" << endl;
+	string pwd;
+	cin >> pwd;
+	
+	if (username == "doctor"&& pwd == "0000")
+	{
 
+		cout << "身份确认成功" << endl;
+		cout << "+++++++++++++++++++++++++\n";
+		cout << "医生连线成功\n";
+	}
+	else{
+		//否则循环提示输入
+		goto D;
+	}
+
+
+}
 void Doctor::loadFile()	//将文件信息读取到链表中
 {
 
@@ -176,4 +226,31 @@ void Doctor::loadFile()	//将文件信息读取到链表中
 	}
 	//Outputlist(d_head, 1);
 	inf.close();
+}
+
+void Doctor::findByIdcard(string idcard)
+{
+	struct PatientInfo *p = d_head;
+	if (d_head == NULL)
+	{
+		return;
+	}
+	while (idcard != p->idcard && p->next != NULL)
+	{
+		p = p->next;
+	}
+	if (idcard == p->idcard)
+	{
+		cout << "查找成功！！\n";
+		//打印病人信息
+		cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+		cout << "+++++++++++++++++++病人信息：++++++++++++++++++++++\n";
+		cout << "\n";
+		cout << "姓名" << "\t" << "身份证号码" << "\t" << "挂号" << "\t\t" << "费用" << "\t" << "病情以及病史" <<"\t"<< "诊断结果" << "\t" << "药方" << endl;
+		cout << p->name << "\t" << p->idcard << "\t\t" << p->m_num << "\t" << p->money << "\t" << p->record << "\t" << p->result <<"\t"<< p->medicine << "\t" << endl;
+	}
+	else{
+		cout << "查找失败！！\n";
+		return;
+	}
 }

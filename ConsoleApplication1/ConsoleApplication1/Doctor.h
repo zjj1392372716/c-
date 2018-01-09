@@ -1,5 +1,6 @@
 #pragma once
 #include "medicinal.h"
+#include "Person.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -14,19 +15,22 @@ struct PatientInfo{					//病人信息
 	struct PatientInfo * next; 		//指向链表中的下一个结构 
 };
 //继承药材库类
-class Doctor:public medicinal
+class Doctor:public medicinal ,public Person
 {
 public:
 	PatientInfo *d_head;//头指针
-	Doctor();
+	Doctor(string name="doctor", int age=0);
 	void Savetofile();	//将链表信息存入文件中
 	void insertinfo(string name, string idcard, string num, string money, string record, string result, string medicine);//链表结点的插入
 	PatientInfo *Gethead(){ return d_head; }
 	~Doctor();
+	void DoctorToLogin();//医生登录
+	void showMedicinal();//打印药材库
 	void askInfo(string name, string num, string idcard);//询问病情写入链表
 	void Outputlist(struct PatientInfo *head, int flag);//链表结点的输出
 	void loadFile();
 	string getResult();
+	void Doctor::findByIdcard(string idcard);
 	string getmed();
 };
 
